@@ -126,6 +126,6 @@ return {
     "setTimeout": setTimeout2,
     "setInterval": setInterval2,
     "clearTime": clearTime,
-    "async": as
+    "exec": as
 };
 }();
