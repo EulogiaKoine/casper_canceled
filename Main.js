@@ -1,7 +1,7 @@
 //---------- Preprocessing Layer -----------
 const scriptName = "Casper";
 const SD = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
-const config = require(SD+'/'+scriptName+'/proprocess/config.js');
+const config = require(SD+'/'+scriptName+'/preprocess/config.js')(scriptName);
 const setTimeout2 = config.require('preprocess/setTimeout2.js');
 const clearTime = setTimeout.clearTime;
 [setTimeout, setInterval, clearTimeout, clearInterval] = [setTimeout2.setTimeout, setTimeout2.setInterval, i => clearTime(i), i => clearTime(i)];
@@ -17,7 +17,7 @@ const nanoTime = System.nanoTime;
 var start, result;
 
 function response(room, msg, sender, isGroupChat, replier, imageDB){
-    if(room.startsWith("★") || !isGroupChat){
+    if(room.indexOf("★") !== -1 || !isGroupChat){
         if(msg.startsWith('e') && config.admin.hash.includes(imageDB.getProfileHash())){
             const rp = replier.reply.bind(replier);
             msg = msg.slice(1).trim();

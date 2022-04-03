@@ -1,6 +1,8 @@
 {
     "name": "Casper",
     "licence": "MIT",
+    "environment": "메신저봇R",
+    "engine": "Rhino JS",
     "author": "Eulogia Koinē",
     "version": "0.1",
     "testing_room": [

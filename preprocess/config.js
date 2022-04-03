@@ -1,33 +1,24 @@
-module.exports = (function(){
+module.exports = function(name){
 const _SD = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
+const _PATH = _SD+'/'+name+'/preprocess/config.json';
 
-const schema = JSON.parse(FileStream.read('./config.json'));
-const config = {};
-for(let i in schema){
-    Object.defineProperty(config, i, {
-        value: schema[value],
-        writable: true
-    });
-}
+const config = JSON.parse(FileStream.read(_PATH));
 
 return Object.assign(
     config,
     {
         getPath: (function(path){
-            return _SD +'/' + this.name + '/' + path;
+            return _SD +'/' + name + '/' + path;
         }).bind(config),
 
         save: (function(){
-            FileStream.write('./config.json', JSON.stringify(this, null, 4));
+            FileStream.write(_PATH, JSON.stringify(this, null, 4));
         }).bind(config),
 
         load: (function(){
-            let schema = JSON.parse(FileStream.read('./config.json'));
+            let schema = JSON.parse(FileStream.read(_PATH));
             for(let i in schema){
-                Object.defineProperty(this, i, {
-                    value: schema[i],
-                    writable: true
-                });
+                this[i] = schema[i];
             }
         }).bind(config),
 
@@ -35,4 +26,4 @@ return Object.assign(
             return require('../'+path);
         })
     });
-})();
+};
