@@ -7,8 +7,12 @@ const config = JSON.parse(FileStream.read(_PATH));
 return Object.assign(
     config,
     {
-        getPath: (function(path){
+        getAbsolutePath: (function(path){
             return _SD +'/' + name + '/' + path;
+        }).bind(config),
+
+        getPath: (function(path){
+            return name + '/' + path;
         }).bind(config),
 
         save: (function(){

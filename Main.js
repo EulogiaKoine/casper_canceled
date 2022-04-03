@@ -3,8 +3,8 @@ const scriptName = "Casper";
 const SD = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
 const config = require(SD+'/'+scriptName+'/preprocess/config.js')(scriptName);
 const setTimeout2 = config.require('preprocess/setTimeout2.js');
-const clearTime = setTimeout.clearTime;
-[setTimeout, setInterval, clearTimeout, clearInterval] = [setTimeout2.setTimeout, setTimeout2.setInterval, i => clearTime(i), i => clearTime(i)];
+const clearTime = setTimeout2.clearTime;
+[setTimeout, setInterval, clearTimeout, clearInterval] = [setTimeout2.setTimeout, setTimeout2.setInterval, (i => clearTime(i)), (i => clearTime(i))];
 
 //---------- Database Layer ----------
 const DB = config.require('components/DB/Database.js')(config.getPath('database'));

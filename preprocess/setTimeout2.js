@@ -5,32 +5,34 @@ importClass(java.util.concurrent.LinkedBlockingQueue);
 
 module.exports = function(){
 
-let currentId = -2;
+let currentId = 0;
 const list = {};
+const now = Date.now;
 
 const SQ = new LinkedBlockingQueue();
-const Stack = new Thread({run: function(){
+const Stack_func = function(){
     let f;
     while(true){
         try{
             f = SQ.take();
-            f.args ? f.apply(undefined, f.args) : f();
+            f.args ? f.fn.apply(undefined, f.args) : f.fn();
         } catch(e) {
             Log.e(e);
         }
     }
-}});
+};
+const Stack = new Thread({run: Stack_func});
 Stack.start();
 
 const WQ = new LinkedBlockingQueue();
-const Waiting = new Thread({run: function(){
+const Waiting_func = function(){
     let f;
     while(true){
         try{
             f = WQ.take();
 
-            if(f.end <= Date.now()){
-                SQ.put(f);
+            if(f.end <= now()){
+                SQ.put(f.fn);
 
                 if(f.repeat){
                     f.end += f.long;
@@ -45,7 +47,8 @@ const Waiting = new Thread({run: function(){
             Log.e(e);
         }
     }
-}});
+};
+const Waiting = new Thread({run: Waiting_func});
 Waiting.start();
 
 function st2(fn, time, args){
@@ -57,16 +60,16 @@ function st2(fn, time, args){
         throw new TypeError("setTimeout2_ 3rd argument, 'arguments' must be an array");
     }
 
-    fn = new Function(fn);
-
-    fn.args = args;
-    fn.end = (typeof time === 'number') ? (Date.now() + Math.floor(time)) : 0;
-
     let id = ++currentId;
-    fn.id = id;
+    const f = {
+        fn: fn,
+        end: (typeof time === 'number') ? (now() + (time >> 0)) : 0,
+        args: args,
+        id: id
+    };
 
-    list[id] = true;
-    WQ.put(fn);
+    list[id] = f;
+    WQ.put(f);
     return id;
 }
 const setTimeout2 = st2.bind(undefined);
@@ -80,22 +83,23 @@ function si2(fn, time, args){
         throw new TypeError("setInterval2_ 3rd argument, 'arguments' must be an array");
     }
 
-    fn = new Function(fn);
-    fn.args = args;
-
-    time = (typeof time === 'number')? Math.floor(time): 1000;
+    time = (typeof time === 'number')? (time >> 0): 1000;
     if(time <= 0){
         throw new TypeError("setInterval2_ 2nd argument, 'time' must be more than 0");
     }
-    fn.end = Date.now() + time;
-    fn.long = time;
-    fn.repeat = true;
 
     let id = ++currentId;
-    fn.id = id;
+    const f = {
+        fn: fn,
+        id: id,
+        args: args,
+        end: now() + time,
+        long: time,
+        repeat: true
+    };
 
-    list[id] = true;
-    WQ.put(fn);
+    list[id] = f;
+    WQ.put(f);
     return id;
 }
 const setInterval2 = si2.bind(undefined);
@@ -105,7 +109,7 @@ function ct(id){
         throw new ReferenceError("clearTime_ id '" + id + "' doesn't exists");
     }
 
-    WQ.remove(list[id]);
+    while(!WQ.remove(list[id])){}
     delete list[id];
 }
 const clearTime = ct.bind(undefined);
@@ -115,9 +119,10 @@ function asc(fn){
         throw new TypeError("async_ 1st argument, 'func' must be a function");
     }
 
-    fn = new Function(fn);
-    fn.args = Array.from(arguments).splice(1);
-    SQ.put(fn);
+    SQ.put({
+        fn: fn,
+        args: Array.from(arguments).splice(1)
+    });
 }
 const as = asc.bind(undefined);
 
@@ -126,6 +131,16 @@ return {
     "setTimeout": setTimeout2,
     "setInterval": setInterval2,
     "clearTime": clearTime,
+    "Stack": {
+        "queue": SQ,
+        "func": Stack_func,
+        "thread": Stack
+    },
+    "Waiting": {
+        "queue": WQ,
+        "func": Waiting_func,
+        "thread": Waiting
+    },
     "exec": as
 };
 }();
