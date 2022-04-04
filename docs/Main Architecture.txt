@@ -1,0 +1,19 @@
+ < 계층별 분류 >
+
+ Preprocessing(전처리)_
+ 메인 시스템 메타데이터(config) 세팅
+  - config.js : 게임에 대한 정보를 담고 있으며 다루기 위한 인터페이스 제공.
+ 공통적으로 사용되는 클래스 설치
+  - setTImeout2 : 기존 Rhino JS의 열악한 setTimeout, setInterval 대체. Thread 2개 사용.
+  - 
+
+• Database(데이터)_
+ 데이터 중심형 모델의 구현. 해당 계층의 책임은 총 2가지이다.
+ 1. 최초 컴파일 시 스토리지와 메모리 데이터베이스의 동기화. 즉, 메모리에서 모든 데이터에 대한 빠른 접근
+ 2. 주기적인 비동기 저장 및 백업(스레드 사용)
+  - components/database/Database.js : 
+  - ./File.js, Directory.js : 파일/디렉토리 단위 스토리지 상호작용 지원. 사용 스레드 없음.
+
+
+• Application(비즈니스 로직)_
+ 계정 관리 시스템, 월드 시스템, 

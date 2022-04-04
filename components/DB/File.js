@@ -69,6 +69,10 @@ File.prototype.getPath = function(){
     return Paths.get(this.path);
 };
 
+File.prototype.getName = function(){
+    return new String(this.path.fileName).replace(/\.(txt|js|json)$/, '');
+};
+
 File.prototype.getType = function(){
     return this.type;
 };

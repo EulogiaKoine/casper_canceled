@@ -27,7 +27,7 @@ return Object.assign(
         }).bind(config),
 
         require: (function(path){
-            return require('../'+path);
+            return require('../'+path+'.js');
         })
     });
 };

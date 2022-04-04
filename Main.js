@@ -2,14 +2,16 @@
 const scriptName = "Casper";
 const SD = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
 const config = require(SD+'/'+scriptName+'/preprocess/config.js')(scriptName);
-const setTimeout2 = config.require('preprocess/setTimeout2.js');
+const setTimeout2 = config.require('preprocess/setTimeout2');
 const clearTime = setTimeout2.clearTime;
 [setTimeout, setInterval, clearTimeout, clearInterval] = [setTimeout2.setTimeout, setTimeout2.setInterval, (i => clearTime(i)), (i => clearTime(i))];
 
 //---------- Database Layer ----------
-const DB = config.require('components/DB/Database.js')(config.getPath('database'));
+const DB = config.require('components/DB/Database')(config.getPath('database'));
+const Meta = DB.read('meta');
 
-
+//---------- UI Layer ---------
+const [View, Controller] = ['View', 'Controller'].map(v => config.require('components/UI/'+v));
 
 //---------- 임시 eval용 ----------
 importClass(java.lang.System);
@@ -29,6 +31,10 @@ function response(room, msg, sender, isGroupChat, replier, imageDB){
             catch (e) {
                 rp("\u2622 " + e.name + " \xb7\xb7\xb7 " + e.lineNumber + "\n " + e.message);
             }
+            return;
+        }
+        if(msg === 'm해시'){
+            replier.reply(sender+": "+imageDB.getProfileHash());
         }
     }
 }
