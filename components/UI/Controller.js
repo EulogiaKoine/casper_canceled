@@ -4,7 +4,7 @@ module.exports = (function(){
 
 const filters = {};
 if(true){
-    let list = DB.read(Meta.read('UI/controller').path);
+    let list = DB.getContent(Meta.read('UI/controller').path).list();
     for(let file of list){
         filters[file.getName()] = file.read();
     }

@@ -8,7 +8,7 @@ const clearTime = setTimeout2.clearTime;
 
 //---------- Database Layer ----------
 const DB = config.require('components/DB/Database')(config.getPath('database'));
-const Meta = DB.read('meta');
+const Meta = DB.getContent('meta');
 
 //---------- UI Layer ---------
 const [View, Controller] = ['View', 'Controller'].map(v => config.require('components/UI/'+v));

@@ -28,6 +28,8 @@ const deleteDir = (dir => {
 
 module.exports = (function(){
 
+const File = require('./File.js');
+
 function Directory(path, createIfNotExists){
     if(path === undefined || path === null){
         throw new TypeError('Directory_ please input the path(1st argument)');
@@ -70,6 +72,10 @@ function Directory(path, createIfNotExists){
 
 Directory.prototype.getPath = function(){
     return this.path;
+};
+
+Directory.prototype.getName = function(){
+    return this.path.fileName;
 };
 
 Directory.prototype.exists = function(){
@@ -369,8 +375,27 @@ Directory.prototype.remove = function(path){
     return false;
 };
 
-Directory.prototype.getContent = function(name){
-    return this.contents[name];
+Directory.prototype.getContent = function(path){
+    path = Paths.get(path);
+    const count = path.getNameCount();
+
+    for(let sub in this.contents){
+        if(sub === path.getName(0)){
+            sub = this.contents[sub];
+
+            if(count > 1){
+                if(sub instanceof Directory){
+                    return sub.getContent(path.subpath(1, count));
+                }
+
+                throw new TypeError("Directory.getContent_ '"+path.getName(0)+"' is not an directory: "+this.getName());
+            }
+
+            return sub;
+        }
+
+        throw new ReferenceError("Directory.getContent_ '"+path.toString()+"' doesn't exists in: "+this.getName());
+    }
 };
 
 Directory.prototype.list = function(){

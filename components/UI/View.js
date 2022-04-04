@@ -4,7 +4,7 @@ module.exports = (function(){
 
 const views = {};
 if(true){
-    let list = DB.read(Meta.read('UI/view').path);
+    let list = DB.getContent(Meta.read('UI/view').path).list();
     for(let file of list){
         views[file.getName()] = file.read();
     }
