@@ -393,9 +393,9 @@ Directory.prototype.getContent = function(path){
 
             return sub;
         }
-
-        throw new ReferenceError("Directory.getContent_ '"+path.toString()+"' doesn't exists in: "+this.getName());
     }
+
+    throw new ReferenceError("Directory.getContent_ '"+path.toString()+"' doesn't exists in: "+this.getName());
 };
 
 Directory.prototype.list = function(){
