@@ -30,7 +30,6 @@ function View(){
         throw new Error("View_ it's an interface; please use a get() method");
     }
 }
-View = View.bind(undefined);
 
 View.filters = views;
 View.getFilter = (function(type){
@@ -47,9 +46,9 @@ View.get = (function(type){
         return instances[type];
     }
 
-    if(type in list){
+    if(type in views){
         let view = {
-            filter: list[type]
+            filter: views[type]
         };
         view.__proto__ = this.prototype;
 

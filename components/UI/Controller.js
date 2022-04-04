@@ -19,7 +19,6 @@ function Controller(type, model, view){
         throw new ReferenceError("Controller_ there is no such type of filter '"+type+"'");
     }
 }
-Controller = Controller.bind(undefined);
 
 Controller.filters = filters;
 Controller.getFilter = (function(type){
@@ -28,6 +27,12 @@ Controller.getFilter = (function(type){
 
 Controller.prototype = {
     input: function(user, msg){
+        let result = this.filter(msg);
+        if(result === undefined) return;
+        
+        result = this.model.res(user, result);
+        if(result === undefined) return;
+
         this.view.show(user, this.model.res(user, this.filter(msg)));
     },
 

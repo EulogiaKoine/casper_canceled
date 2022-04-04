@@ -377,22 +377,19 @@ Directory.prototype.remove = function(path){
 
 Directory.prototype.getContent = function(path){
     path = Paths.get(path);
-    const count = path.getNameCount();
+    let count = path.getNameCount(), sub = path.getName(0);
+    if(sub in this.contents){
+        sub = this.contents[sub];
 
-    for(let sub in this.contents){
-        if(sub === path.getName(0)){
-            sub = this.contents[sub];
-
-            if(count > 1){
-                if(sub instanceof Directory){
-                    return sub.getContent(path.subpath(1, count));
-                }
-
-                throw new TypeError("Directory.getContent_ '"+path.getName(0)+"' is not an directory: "+this.getName());
+        if(count > 1){
+            if(sub instanceof Directory){
+                return sub.getContent(path.subpath(1, count));
             }
 
-            return sub;
+            throw new TypeError("Directory.getContent_ '"+sub.getName()+"'is not a directory: "+this.getName());
         }
+
+        return sub;
     }
 
     throw new ReferenceError("Directory.getContent_ '"+path.toString()+"' doesn't exists in: "+this.getName());
